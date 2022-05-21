@@ -1,79 +1,55 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Sat Feb 27 16:33:16 2021
-
-@author: praneeth
-"""
-
+import cv2
+import numpy as np
 import streamlit as st
-import pandas as pd
-
-import plotly.express as px
 
 
 
+# Cache model to load faster an only do it once rather than on every refresh
+@st.cache(allow_output_mutation = True)
+def load_models(model_file_path):
+  # Load in the pre-trained model
+  model = tf.keras.models.load_model(model_file_path)
+  return model
+
+# Load the models
+model_1 = load_models('/models/model_1')
+model_2 = load_models('/models/model_2')
+model_3 = load_models('/models/model_3')
 
 
-st.title("Iris Streamlit App")
-st.markdown("This is a demo Streamlit app.")
 
-@st.cache(persist=True)
-def load_data():
-    df = pd.read_csv("https://datahub.io/machine-learning/iris/r/iris.csv")
-    return(df)
+# Define the Plotly function
+def predictImage(img):
+    ## TODO
+    return fig
 
 
+# Create the Application
+st.title('Face Mask Detection')
 
-def run():
-    st.subheader("Iris Data Loaded into a Pandas Dataframe.")
-    
-    df = load_data()
-    
-    
-    
-    disp_head = st.sidebar.radio('Select DataFrame Display Option:',('Head', 'All'),index=0)
-   
-    
-   
-    #Multi-Select
-    #sel_plot_cols = st.sidebar.multiselect("Select Columns For Scatter Plot",df.columns.to_list()[0:4],df.columns.to_list()[0:2])
-    
-    #Select Box
-    #x_plot = st.sidebar.selectbox("Select X-axis Column For Scatter Plot",df.columns.to_list()[0:4],index=0)
-    #y_plot = st.sidebar.selectbox("Select Y-axis Column For Scatter Plot",df.columns.to_list()[0:4],index=1)
-    
-    
-    if disp_head=="Head":
-        st.dataframe(df.head())
-    else:
-        st.dataframe(df)
-    #st.table(df)
-    #st.write(df)
-    
-    
-    #Scatter Plot
-    fig = px.scatter(df, x=df["sepallength"], y=df["sepalwidth"], color="class",
-                 size='petallength', hover_data=['petalwidth'])
-    
-    fig.update_layout({
-                'plot_bgcolor': 'rgba(0, 0, 0, 0)'})
-    
-    fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor='lightgray')
-    fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor='lightgray')
-   
-    st.write("\n")
-    st.subheader("Scatter Plot")
-    st.plotly_chart(fig, use_container_width=True)
-    
-    
-    #Add images
-    #images = ["<image_url>"]
-    #st.image(images, width=600,use_container_width=True, caption=["Iris Flower"])
-   
-    
-   
-    
-   
-if __name__ == '__main__':
-    run()    
+uploaded_file = st.file_uploader("Choose a image file", type="jpg")
+
+
+with col1:
+  st.markdown('Please upload an image here:')
+  # Create a drawing canvas with desired properties
+  if uploaded_file is not None:
+      # Convert the file to an opencv image.
+      file_bytes = np.asarray(bytearray(uploaded_file.read()), dtype=np.uint8)
+      opencv_image = cv2.imdecode(file_bytes, 1)
+
+      
+
+with col2: 
+    # Now do something with the image! For example, let's display it:
+      st.image(opencv_image, channels="BGR")
+  
+
+
+# Generate the prediction based on the users input
+if st.button('Predict'):
+    predictImage(opencv_image)
+
+# Show example predictions images
+st.header('Example Predictions')
+# st.image('/content/emnist_letter_exploration_and_prediction/reference/letter_predictions_img_196.png')
