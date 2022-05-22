@@ -1,56 +1,79 @@
-# import cv2
-# import numpy as np
+import cv2
+import numpy as np
 import streamlit as st
+import tensorflow as tf
+import cvlib as cv
+from tensorflow.keras.preprocessing.image import img_to_array, load_img, ImageDataGenerator
+import numpy as np
+import tensorflow as tf
+import joblib
 
+def image_preprocessing(image):
+  input_image = image
+  face, confidence = cv.detect_face(input_image)
+  start_X, start_Y, end_X, end_Y = face[0]
+  resize_image = cv2.resize(input_image[start_Y:end_Y,start_X:end_X],(96,96))
+  resize_image = resize_image.astype("float")/ 255.0
+  img_array = img_to_array(resize_image)
+  final_image = np.expand_dims(img_array, axis=0)
+  return final_image
 
-st.write("Hello World")
+def predict(preprocessed_image):
+  my_model = tf.keras.models.load_model('gender_detection.model')
+  labels = ["Man","Woman"]
+  prediction = my_model.predict(preprocessed_image)[0]
+  Predicted_label = labels[np.argmax(prediction)]
+  return Predicted_label
 
-# # Cache model to load faster an only do it once rather than on every refresh
-# @st.cache(allow_output_mutation = True)
-# def load_models(model_file_path):
-#   # Load in the pre-trained model
-#   model = tf.keras.models.load_model(model_file_path)
-#   return model
+def gender_classification(opencv_image):
+    preprocessed_image = image_preprocessing(opencv_image)
+    prediction = predict(preprocessed_image)
+    return prediction
 
-# # Load the models
-# model_1 = load_models('/models/model_1')
-# model_2 = load_models('/models/model_2')
-# model_3 = load_models('/models/model_3')
-
-
-
-# # Define the Plotly function
-# def predictImage(img):
-#     ## TODO
-#     return fig
-
-
-# # Create the Application
-# st.title('Face Mask Detection')
-
-# uploaded_file = st.file_uploader("Choose a image file", type="jpg")
-
-
-# with col1:
-#   st.markdown('Please upload an image here:')
-#   # Create a drawing canvas with desired properties
-#   if uploaded_file is not None:
-#       # Convert the file to an opencv image.
-#       file_bytes = np.asarray(bytearray(uploaded_file.read()), dtype=np.uint8)
-#       opencv_image = cv2.imdecode(file_bytes, 1)
-
+### Pooja's Code
+def mask_predict(img):
+    model = joblib.load('part-a-model.sav')
+    # if type(img) == str:
+    #     img = cv2.imread(img)
+    img = cv2.resize(img,(200,200))
+    img = img / 255
+    if model.predict(np.array([img]))[0] > 0.5:
+        predict = 0 # Mask Recognized
+        predictString = "masked"
+    else:
+        predict = 1 # Mask not Recognized
+        predictString = "unmasked"
       
-
-# with col2: 
-#     # Now do something with the image! For example, let's display it:
-#       st.image(opencv_image, channels="BGR")
-  
+    st.write("Facemask Detection: This person is : ",  predictString)
+    return predict
 
 
-# # Generate the prediction based on the users input
-# if st.button('Predict'):
-#     predictImage(opencv_image)
+# Define the Image function
+def predictImage(uploaded_file):
+  # picture = Image.open(r img)  
+  # picture = picture.save("dolls.jpg") 
 
-# # Show example predictions images
-# st.header('Example Predictions')
-# # st.image('/content/emnist_letter_exploration_and_prediction/reference/letter_predictions_img_196.png')
+    file_bytes = np.asarray(bytearray(uploaded_file.read()), dtype=np.uint8)
+    opencv_image = cv2.imdecode(file_bytes, 1)
+
+
+    #call pooja's function/model to check if mask exist
+    if (mask_predict(opencv_image) == 1):
+      st.write("Gender Classificxation: This person is a : ",  gender_classification(opencv_image))
+    else:
+      #run GAN model to remove mask
+      pass
+      #finally call the gender classificaiton function
+      st.write("Gender Classificxation: This person is a : ",  gender_classification(opencv_image))
+
+# Create the Application
+st.title('Gender Classification, Facemask Detection, and Facemask Removal')
+
+uploaded_file = st.file_uploader("Choose a image file", type="jpeg")
+
+
+input = st.button('Predict')
+# Generate the prediction based on the users input
+if input:
+    st.image(uploaded_file, channels="BGR")
+    predictImage(uploaded_file)
