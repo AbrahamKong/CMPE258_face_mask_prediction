@@ -7,6 +7,12 @@ EXPOSE 8080
 #Copy Requirements.txt file into app directory
 COPY requirements.txt app/requirements.txt
 
+ENV APP_HOME /app
+WORKDIR $APP_HOME
+COPY . ./
+
+ENV PYTHONUNBUFFERED True
+
 #install all requirements in requirements.txt
 RUN pip install -r app/requirements.txt
 
