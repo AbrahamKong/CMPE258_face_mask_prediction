@@ -5,3 +5,4 @@ cvlib
 pandas
 streamlit
 joblib
+pil
