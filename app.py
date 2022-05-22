@@ -34,7 +34,7 @@ def gender_classification(opencv_image):
 # Facemask Detection
 def mask_predict(img):
     st.subheader("Mask Detection")
-    model = joblib.load('/models/gender_detection.model')
+    model = joblib.load('/models/part-a-model.sav')
     # if type(img) == str:
     #     img = cv2.imread(img)
     img = cv2.resize(img,(200,200))
