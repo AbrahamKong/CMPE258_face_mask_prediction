@@ -1,1 +1,6 @@
+numpy
+tensorflow
+opencv-python
+cvlib
+pandas
 streamlit
