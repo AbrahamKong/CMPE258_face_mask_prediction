@@ -5,4 +5,4 @@ cvlib
 pandas
 streamlit
 joblib
-pil
+pillow
