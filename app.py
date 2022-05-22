@@ -32,9 +32,12 @@ def gender_classification(opencv_image):
     prediction = predict(preprocessed_image)
     return prediction
 # Facemask Detection
+
+
 def mask_predict(img):
     st.subheader("Mask Detection")
-    model = joblib.load('part-a-model.sav')
+    gcs_path = 'gs://face-mask-detection-model/part-a-model.sav'
+    model = joblib.load(tf.io.gfile.GFile(gcs_path, 'rb'))
     # if type(img) == str:
     #     img = cv2.imread(img)
     img = cv2.resize(img,(200,200))
