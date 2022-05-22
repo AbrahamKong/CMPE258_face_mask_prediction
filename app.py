@@ -21,7 +21,7 @@ def image_preprocessing(image):
   final_image = np.expand_dims(img_array, axis=0)
   return final_image
 def predict(preprocessed_image):
-  my_model = tf.keras.models.load_model('/models/gender_detection.model')
+  my_model = tf.keras.models.load_model('gender_detection.model')
   labels = ["Man","Woman"]
   prediction = my_model.predict(preprocessed_image)[0]
   Predicted_label = labels[np.argmax(prediction)]
@@ -34,7 +34,7 @@ def gender_classification(opencv_image):
 # Facemask Detection
 def mask_predict(img):
     st.subheader("Mask Detection")
-    model = joblib.load('/models/part-a-model.sav')
+    model = joblib.load('part-a-model.sav')
     # if type(img) == str:
     #     img = cv2.imread(img)
     img = cv2.resize(img,(200,200))
@@ -49,17 +49,17 @@ def mask_predict(img):
     return predict
 # Facemask Removal
 def facemaskRemoval(img):
-      mask_g = "/models/MaskG"
-      face_g = "/models/FaceG"
-      face_D_region = "/models/face_D_region"
-      face_D_whole = "/models/face_D_whole"
+      mask_g = "MaskG"
+      face_g = "FaceG"
+      face_D_region = "face_D_region"
+      face_D_whole = "face_D_whole"
       mask_g_model = tf.keras.models.load_model(mask_g, compile=False)
       face_g_model= tf.keras.models.load_model(face_g, compile=False)
       face_D_whole_model= tf.keras.models.load_model(face_D_whole, compile=False)
       face_D_region_model= tf.keras.models.load_model(face_D_region, compile=False)
       vgg_model = VGG19_model()
       try:
-        test = Load_model(mask_g_model, face_g_model, mask_checkpoint_dir="/models/mask32_checkpoints", face_checkpoint_dir="/models/face_checkpoints")
+        test = Load_model(mask_g_model, face_g_model, mask_checkpoint_dir="mask32_checkpoints", face_checkpoint_dir="face_checkpoints")
         test.load()
         # st.image(img,channels="BGR")
       except:
