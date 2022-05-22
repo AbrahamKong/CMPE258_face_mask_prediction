@@ -1,30 +1,19 @@
-#Base Image to use
+# Use the official lightweight Python image.
+# https://hub.docker.com/_/python
 FROM python:3.7
 
-#Expose port 8080
-
+# Allow statements and log messages to immediately appear in the Knative logs
 ENV PYTHONUNBUFFERED True
+
 EXPOSE 8080
 
-#Copy Requirements.txt file into app directory
-COPY requirements.txt app/requirements.txt
-
+# Copy local code to the container image.
 ENV APP_HOME /app
 WORKDIR $APP_HOME
 COPY . ./
 
-
-
-#install all requirements in requirements.txt
-RUN pip install -r app/requirements.txt
+# Install production dependencies.
+RUN pip install -r requirements.txt
 RUN python3.7 -m pip install --upgrade pip
 
-# #Copy all files in current directory into app directory
-# COPY . /app
-
-# #Change Working Directory to app directory
-# WORKDIR /app
-
-# #Run the application on port 8080
-# ENTRYPOINT ["streamlit", "run", "app.py", "--server.port=8080", "--server.address=0.0.0.0"]
 CMD streamlit run --server.port 8080 app.py
