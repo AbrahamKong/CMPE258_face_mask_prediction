@@ -13,6 +13,9 @@ WORKDIR $APP_HOME
 COPY . ./
 
 # Install production dependencies.
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        libgl1 \
+        libglib2.0-0 \
 RUN pip install -r requirements.txt
 RUN python3.7 -m pip install --upgrade pip
 
