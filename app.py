@@ -19,7 +19,7 @@ def image_preprocessing(image):
   return final_image
 
 def predict(preprocessed_image):
-  my_model = tf.keras.models.load_model('gender_detection.model')
+  my_model = tf.keras.models.load_model('/models/gender_detection.model')
   labels = ["Man","Woman"]
   prediction = my_model.predict(preprocessed_image)[0]
   Predicted_label = labels[np.argmax(prediction)]
@@ -32,7 +32,7 @@ def gender_classification(opencv_image):
 
 ### Pooja's Code
 def mask_predict(img):
-    model = joblib.load('part-a-model.sav')
+    model = joblib.load('/models/part-a-model.sav')
     # if type(img) == str:
     #     img = cv2.imread(img)
     img = cv2.resize(img,(200,200))
